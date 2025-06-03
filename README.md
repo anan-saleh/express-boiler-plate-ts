@@ -85,6 +85,12 @@ understand later the metadata if its a mistake or not
  import the env config on the util file --- check later if it was a mistake
 
 
+--------------------------------- seventh commit -----------------------------------------
+
+npm install -D eslint @stylistic/eslint-plugin
+
+I used mjs on config so i can use module import and export since the project is for required syntax
+
 -->
 
 
