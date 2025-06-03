@@ -1,9 +1,9 @@
 import express, { Application } from 'express';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ENV } from './utils/env';
+
 
 const app : Application = express();
-const PORT = process.env.PORT;
+const PORT = ENV.PORT;
 
 app.get('/', (req, res) => {
   res.send('Hello from TypeScript + Express!');
