@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
 import { log, LogLevel } from "./logger";
-dotenv.config();
 
 export const getEnvVariable = (key: string): string | undefined => {
   const value = process.env[key];
@@ -11,7 +9,10 @@ export const getEnvVariable = (key: string): string | undefined => {
   }
 }
 
+const MONGO_COLLECTION = 'SomeCollection';
+
 export const ENV = {
   PORT: parseInt(String(getEnvVariable('PORT'))),
   LOG_LEVEL: getEnvVariable('LOG_LEVEL'),
+  MONGO_URI: getEnvVariable('MONGO_URI') || `mongodb://127.0.0.1:27017/${MONGO_COLLECTION}`,
 };
