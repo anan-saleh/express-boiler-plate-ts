@@ -68,6 +68,21 @@ npm install dotenv
 
 Add on nodemon.json on watch .env
 
+--------------------------------- fourth commit -----------------------------------------
+
+ npm install pino
+ npm install pino-pretty --save-dev
+
+add util folder with logger.ts
+
+understand later the metadata if its a mistake or not
+
+
+--------------------------------- fifth commit -----------------------------------------
+
+ make a util file for env where i check if env variable exist or not
+
+ import the env config on the util file --- check later if it was a mistake
 
 
 -->
