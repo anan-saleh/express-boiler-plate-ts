@@ -62,6 +62,13 @@ changes for scripts
 
 
 
+--------------------------------- third commit -----------------------------------------
+
+npm install dotenv
+
+Add on nodemon.json on watch .env
+
+
 
 -->
 
