@@ -1,14 +1,10 @@
-import express, { Application } from 'express';
+import express from 'express';
 import { ENV } from './utils/env';
+import { log } from './utils/logger';
 
-
-const app : Application = express();
+const app  = express();
 const PORT = ENV.PORT;
 
-app.get('/', (req, res) => {
-  res.send('Hello from TypeScript + Express!');
-});
-
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  log(`Server running at http://localhost:${PORT}`);
 });
