@@ -91,16 +91,9 @@ npm install -D eslint @stylistic/eslint-plugin
 
 I used mjs on config so i can use module import and export since the project is for required syntax
 
+
+possible issues 
+
+app.routing issue/ route not found 404 => restarting IDE can keep the port running
+
 -->
-
-
-
-<---
-        possible issues
-
-    1) app.routing issue/ route not found 404 => restarting IDE can keep the port running
-
-->
-
-
-
