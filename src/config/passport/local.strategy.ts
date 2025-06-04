@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { findUserByEmailWithPassword } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
 import { UnauthorizedError } from '../../utils/AppError';
+import { sanitizeUser } from '../../utils/santizers';
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -29,12 +30,10 @@ passport.use(new LocalStrategy({
         meta: { email },
       }));
     }
-    const allowedUserProps = {
-      _id: user._id,
-      email: user.email
-    };
-    log('User found at local strategy for passport', LogLevel.DEBUG, { allowedUserProps });
-    return done(null, allowedUserProps);
+    const safeUser = sanitizeUser(user);
+
+    log('User found at local strategy for passport', LogLevel.DEBUG, { user: safeUser });
+    return done(null, safeUser);
   } catch (err) {
     log('Error at passport local strategy', LogLevel.ERROR, { err });
     return done(err);
