@@ -1,7 +1,7 @@
 import passport from 'passport';
 import './local.strategy';
 
-import { findUserById } from '../../services/user.services';
+import { findUserById } from '../../services/user.service';
 
 passport.serializeUser((user: any, done) => {
   done(null, user?._id);

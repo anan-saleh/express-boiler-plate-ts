@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { findUserByEmail } from '../../services/user.services';
+import { findUserByEmail } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
 
 passport.use(new LocalStrategy({
