@@ -1,8 +1,10 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 export interface IUser {
   email: string;
   password: string;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -22,6 +24,17 @@ const userSchema = new Schema<IUser>({
 }, {
   timestamps: true,
 });
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  const saltRounds = 10;
+  this.password = await bcrypt.hash(this.password, saltRounds);
+  next();
+});
+
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 export type UserDocument = HydratedDocument<IUser>;
 
