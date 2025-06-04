@@ -11,12 +11,15 @@ export const connectDB = async () => {
       maxConnecting: 3,
     });
   } catch (err) {
+    const errorMessage = 'Error connecting to DB';
     if (err instanceof mongoose.Error.MongooseServerSelectionError) {
-      log('Error connecting to DB', LogLevel.ERROR, {
+      log(errorMessage, LogLevel.ERROR, {
         type: err.name,
         message: err.message,
         stack: err.stack,
       });
+    } else {
+      log(errorMessage, LogLevel.ERROR, { err });
     }
     process.exit(1);
   }
