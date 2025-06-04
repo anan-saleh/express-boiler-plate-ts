@@ -20,7 +20,8 @@
     "mongoose": "^8.15.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
-    "pino": "^9.7.0"
+    "pino": "^9.7.0",
+    "zod": "^3.25.51"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^4.4.0",
