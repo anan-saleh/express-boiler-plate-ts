@@ -27,12 +27,18 @@ const createUser = async ({ email, password }: CreateUserInput) => {
   log(`Attempting to create user: ${email}`, LogLevel.DEBUG);
 
   if (!email || !password) {
-    throw new AppError('Email and password are required', HTTP_STATUS.BAD_REQUEST);
+    throw new AppError({
+      message: 'Email and password are required',
+      httpStatusCode: HTTP_STATUS.BAD_REQUEST,
+    });
   }
 
   const existingUser = await findUserByEmail(email);
   if (existingUser?._id) {
-    throw new AppError('Email already exists', HTTP_STATUS.CONFLICT);
+    throw new AppError({
+      message: 'Email already exists',
+      httpStatusCode: HTTP_STATUS.CONFLICT
+    });
   }
 
   const user = new User({ email, password });

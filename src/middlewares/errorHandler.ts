@@ -9,11 +9,11 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  const statusCode = err instanceof AppError ? err.statusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  const statusCode = err instanceof AppError ? err.httpStatusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR;
   const message = err instanceof AppError ? err.message : 'Something went wrong';
+  log(message, LogLevel.DEBUG, { err, req });
   log(message, LogLevel.ERROR, {
     message: err.message,
-    statusCode,
     stack: err.stack,
     path: req.originalUrl,
     method: req.method,
