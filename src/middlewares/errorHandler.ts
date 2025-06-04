@@ -1,19 +1,20 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { AppError } from '../utils/AppError';
 import { HTTP_STATUS } from '../utils/httpStatus';
 import { log, LogLevel } from '../utils/logger';
 
 export const errorHandler = (
-  err: Error | AppError,
+  err: AppError,
   req: Request,
   res: Response,
-  next: NextFunction,
 ) => {
-  const statusCode = err instanceof AppError ? err.httpStatusCode : HTTP_STATUS.INTERNAL_SERVER_ERROR;
-  const message = err instanceof AppError ? err.message : 'Something went wrong';
+  const statusCode = err.httpStatusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Something went wrong';
   log(message, LogLevel.DEBUG, { err, req });
-  log(message, LogLevel.ERROR, {
+  const severity = err.severity as LogLevel;
+  log(message, severity, {
     message: err.message,
+    body: req.body,
     stack: err.stack,
     path: req.originalUrl,
     method: req.method,
