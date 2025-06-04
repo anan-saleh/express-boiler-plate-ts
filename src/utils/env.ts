@@ -1,5 +1,5 @@
-// isolate this file from every import there is since it will be used everywhere
-// inorder to avoid conflict
+// Do not import here anything unless it's a package
+// This file will be imported everywhere so to avoid conflict keep it as it is
 export const getEnvVariable = (key: string): string | undefined => {
   const value = process.env[key];
   if (!value) {
@@ -16,4 +16,5 @@ export const ENV = {
   LOG_LEVEL: getEnvVariable('LOG_LEVEL') || 'info',
   MONGO_URI: getEnvVariable('MONGO_URI') || `mongodb://127.0.0.1:27017/${MONGO_COLLECTION}`,
   NODE_ENV: getEnvVariable('NODE_ENV') || 'production',
+  SESSION_SECRET: getEnvVariable(('SESSION_SECRET')) || 'random-dev-key'
 };
