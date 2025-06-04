@@ -1,4 +1,4 @@
-import pino, { destination, StreamEntry } from 'pino';
+import pino, { destination, StreamEntry, Level } from 'pino';
 import path from 'path';
 import fs from 'fs';
 import pretty from 'pino-pretty';
@@ -9,19 +9,19 @@ export enum LogLevel {
   WARN = 'warn',
   ERROR = 'error',
   DEBUG = 'debug',
-};
+}
 
 const logDir = path.join(__dirname, '../../logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
-
 const isDev = ENV.NODE_ENV !== 'production';
-const logLevel = ENV.LOG_LEVEL || 'info';
+const logLevel: Level = ENV.LOG_LEVEL as Level;
 
 const streams: StreamEntry[] = [];
 if (isDev) {
   streams.push({
+    level: logLevel,
     stream: pretty({
       sync: true,
       colorize: true,
@@ -31,9 +31,14 @@ if (isDev) {
   });
 } else {
   streams.push({
-    stream: destination(path.join(logDir, 'app.log')),
+    level: logLevel,
+    stream: destination({
+      dest: path.join(logDir, 'app.log'),
+      sync: true,
+    }),
   });
   streams.push({
+    level: logLevel,
     stream: process.stdout
   });
 }
