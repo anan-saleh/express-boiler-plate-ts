@@ -1,12 +1,9 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
-import { AppError } from '../utils/AppError';
+import { AppError, BadRequest } from '../utils/AppError';
 import { HTTP_STATUS } from '../utils/httpStatus';
-
-interface CreateUserInput {
-  email: string;
-  password: string;
-}
+import { sanitizeUser } from '../utils/santizers';
+import { RegisterInput } from '../schemas/auth.schema';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Finding user with password for email: ${email}`, LogLevel.DEBUG);
@@ -27,14 +24,15 @@ const findUserByEmail = async (email: string): Promise<UserDocument | null> => {
   return user;
 };
 
-const createUser = async ({ email, password }: CreateUserInput) => {
+const createUser = async ({ email, password }: RegisterInput) => {
 
   log(`Attempting to create user: ${email}`, LogLevel.DEBUG);
 
+  // with zod validation this is not needed,
+  // but it's kept as proper protection another layer of security
   if (!email || !password) {
-    throw new AppError({
+    throw new BadRequest({
       message: 'Email and password are required',
-      httpStatusCode: HTTP_STATUS.BAD_REQUEST,
     });
   }
 
@@ -49,9 +47,11 @@ const createUser = async ({ email, password }: CreateUserInput) => {
   const user = new User({ email, password });
   await user.save();
 
+  const safeUser = sanitizeUser(user);
+
   log(`User created: ${user.email}`, LogLevel.INFO);
 
-  return user;
+  return safeUser;
 };
 
 export {

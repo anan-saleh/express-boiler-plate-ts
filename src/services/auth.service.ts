@@ -3,9 +3,10 @@ import passport from 'passport';
 import { UserDocument } from '../models/user.model';
 import { UnauthorizedError, InternalServerError } from '../utils/AppError';
 import { log, LogLevel } from '../utils/logger';
+import { LoginInput } from '../schemas/auth.schema';
 
 export const authenticateUser = (
-  req: Request,
+  req: Request<{}, {}, LoginInput>,
 ): Promise<UserDocument> => {
   return new Promise((resolve, reject) => {
     passport.authenticate('local', (err: any, user: UserDocument, info: { message?: string }) => {
