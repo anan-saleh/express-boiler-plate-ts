@@ -1,11 +1,13 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../utils/validators/password';
+import { sanitizeUser } from '../utils/santizers';
 
 export interface IUser {
   email: string;
   password: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  sanitize(): Omit<this, 'password' | '__v' | 'comparePassword' | 'sanitize'>;
 }
 // with zod validation no need to keep in password minlength and maxlength,
 // however they were kept as another layer of protection
@@ -37,6 +39,11 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.sanitize = function () {
+  const sanitizedUser = sanitizeUser(this.toObject());
+  return sanitizedUser;
 };
 
 export type UserDocument = HydratedDocument<IUser>;
