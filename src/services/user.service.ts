@@ -47,9 +47,10 @@ const createUser = async ({ email, password }: RegisterInput) => {
   const user = new User({ email, password });
   await user.save();
 
+  // remove password if returning the user to client
   const safeUser = sanitizeUser(user);
 
-  log(`User created: ${user.email}`, LogLevel.INFO);
+  log(`User created: ${safeUser.email}`, LogLevel.INFO);
 
   return safeUser;
 };
