@@ -1,12 +1,14 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../utils/validators/password';
 
 export interface IUser {
   email: string;
   password: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
-
+// with zod validation no need to keep in password minlength and maxlength,
+// however they were kept as another layer of protection
 const userSchema = new Schema<IUser>({
   email: {
     type: String,
@@ -18,7 +20,8 @@ const userSchema = new Schema<IUser>({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [8, 'Password must be at least 8 characters'],
+    minlength: [MIN_PASSWORD_LENGTH, `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`],
+    maxlength: [MAX_PASSWORD_LENGTH, `Password must be no more than ${MAX_PASSWORD_LENGTH} characters long`],
     select: false,
   }
 }, {
