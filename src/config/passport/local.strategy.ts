@@ -3,7 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { findUserByEmailWithPassword } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
 import { UnauthorizedError } from '../../utils/AppError';
-import { sanitizeUser } from '../../utils/santizers';
+import { backupSanitizer } from '../../services/auth.service';
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -30,10 +30,21 @@ passport.use(new LocalStrategy({
         meta: { email },
       }));
     }
-    const safeUser = sanitizeUser(user);
+    let safeUser = user.sanitize();
+    let backupSanitizedUser;
 
-    log('User found at local strategy for passport', LogLevel.DEBUG, { user: safeUser });
-    return done(null, safeUser);
+    // in case the sanitizer in mongoose method did not work
+    // keep this a proper security measurement
+    // todo: make it recursively later 3 attempts then throw error
+    // ITS VERY BAD TO RETURN PASSWORD ALWAYS PROCEED WITH EXTRA CAUTION
+    // @ts-ignore
+    if (safeUser?.password) {
+      backupSanitizedUser = backupSanitizer(user);
+    }
+
+    const sanitizedUser = backupSanitizedUser?._id ? backupSanitizedUser : safeUser;
+    log('User found at local strategy for passport', LogLevel.DEBUG, { user: sanitizedUser });
+    return done(null, sanitizedUser);
   } catch (err) {
     log('Error at passport local strategy', LogLevel.ERROR, { err });
     return done(err);

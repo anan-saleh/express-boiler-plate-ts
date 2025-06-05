@@ -2,8 +2,8 @@ import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
 import { AppError, BadRequest } from '../utils/AppError';
 import { HTTP_STATUS } from '../utils/httpStatus';
-import { sanitizeUser } from '../utils/santizers';
 import { RegisterInput } from '../schemas/auth.schema';
+import { backupSanitizer } from './auth.service';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Finding user with password for email: ${email}`, LogLevel.DEBUG);
@@ -48,11 +48,23 @@ const createUser = async ({ email, password }: RegisterInput) => {
   await user.save();
 
   // remove password if returning the user to client
-  const safeUser = sanitizeUser(user);
+  const safeUser = user.sanitize();
+  let backupSanitizedUser;
 
-  log(`User created: ${safeUser.email}`, LogLevel.INFO);
+  // in case the sanitizer in mongoose method did not work
+  // keep this a proper security measurement
+  // todo: make it recursively later 3 attempts then throw error
+  // ITS VERY BAD TO RETURN PASSWORD ALWAYS PROCEED WITH EXTRA CAUTION
+  // @ts-ignore
+  if (safeUser?.password) {
+    backupSanitizedUser = backupSanitizer(user);
+  }
 
-  return safeUser;
+  const sanitizedUser = backupSanitizedUser?._id ? backupSanitizedUser : safeUser;
+
+  log(`User created: ${sanitizedUser.email}`, LogLevel.INFO);
+
+  return sanitizedUser;
 };
 
 export {
