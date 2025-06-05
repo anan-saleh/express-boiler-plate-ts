@@ -4,6 +4,7 @@ import { UserDocument } from '../models/user.model';
 import { UnauthorizedError, InternalServerError } from '../utils/AppError';
 import { log, LogLevel } from '../utils/logger';
 import { LoginInput } from '../schemas/auth.schema';
+import { sanitizeUser } from '../utils/santizers';
 
 export const authenticateUser = (
   req: Request<{}, {}, LoginInput>,
@@ -39,4 +40,12 @@ export const logoutUserSession = (req: Request): Promise<void> => {
       resolve();
     });
   });
+};
+
+export const backupSanitizer = (user: UserDocument) => {
+  log('PASSWORD DETECTED IN SANITIZED USER', LogLevel.ERROR, { email: user.email });
+  // @ts-ignore
+  const safeUser = sanitizeUser(user);
+  log('Newly returned temp user', LogLevel.DEBUG, { safeUser });
+  return safeUser;
 };
