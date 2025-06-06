@@ -48,12 +48,15 @@ const logger = pino({
   timestamp: pino.stdTimeFunctions.isoTime
 }, pino.multistream(streams));
 
-export function log(
+const log = (
   message: string,
   severity: LogLevel = LogLevel.INFO,
   meta?: Record<string, any>
-) {
+) => {
   logger[severity](meta || {}, message);
-}
+};
 
-export { logger };
+export {
+  log,
+  logger
+};
