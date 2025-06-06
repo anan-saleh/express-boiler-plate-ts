@@ -1,7 +1,7 @@
 import { Schema, model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../utils/validators/password';
-import { sanitizeUser } from '../utils/santizers';
+import { sanitizeUser } from '../utils/sanitizers';
 
 export interface IUser {
   email: string;

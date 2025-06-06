@@ -4,7 +4,7 @@ import { UserDocument } from '../models/user.model';
 import { UnauthorizedError, InternalServerError } from '../utils/AppError';
 import { log, LogLevel } from '../utils/logger';
 import { LoginInput } from '../schemas/auth.schema';
-import { sanitizeUser } from '../utils/santizers';
+import { sanitizeUser } from '../utils/sanitizers';
 
 export const authenticateUser = (
   req: Request<{}, {}, LoginInput>,
