@@ -10,8 +10,10 @@ export const validate = (schema: ZodSchema<any>): RequestHandler => (req: Reques
   } catch (error: any) {
     log('Error on validating request for register or login', LogLevel.DEBUG, { error });
     next(new BadRequest({
-      message: error.errors?.[0]?.message || 'Validation error',
-      severity: LogLevel.WARN,
+      internalMessage: error.errors?.[0]?.message || 'Validation error',
+      meta: {
+        error
+      },
     }));
   }
 };

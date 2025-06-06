@@ -2,9 +2,8 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { findUserByEmailWithPassword } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
-import { UnauthorizedError } from '../../utils/AppError';
+import { InvalidCredentialsError } from '../../utils/AppError';
 import { backupSanitizer } from '../../services/auth.service';
-import { ErrorCode } from '../../constants/errorCodes';
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -15,10 +14,8 @@ passport.use(new LocalStrategy({
     const user = await findUserByEmailWithPassword(email);
     if (!user?._id) {
       // await createUser({ email, password });
-      return done(new UnauthorizedError({
-        message: 'Invalid email',
-        errorCode: ErrorCode.INVALID_CREDENTIALS,
-        severity: LogLevel.WARN,
+      return done(new InvalidCredentialsError({
+        internalMessage: 'User was not found for this email',
         meta: {
           email
         },
@@ -28,11 +25,11 @@ passport.use(new LocalStrategy({
     const isMatch = await user?.comparePassword(password);
 
     if (!isMatch) {
-      return done(new UnauthorizedError({
-        message: 'Invalid password',
-        errorCode: ErrorCode.INVALID_CREDENTIALS,
-        severity: LogLevel.WARN,
-        meta: { email },
+      return done(new InvalidCredentialsError({
+        internalMessage: 'User password did not match',
+        meta: {
+          email
+        },
       }));
     }
     let safeUser = user.sanitize();

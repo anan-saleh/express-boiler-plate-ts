@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { AppError } from '../utils/AppError';
 import { HTTP_STATUS } from '../constants/httpStatus';
 import { log, LogLevel } from '../utils/logger';
+import { sanitizeObjectFromPassword } from '../utils/sanitizers';
 
 export const errorHandler = (
   err: AppError,
@@ -15,8 +16,9 @@ export const errorHandler = (
   const severity = err.severity as LogLevel;
   log(message, severity, {
     // message: err.message,
+    internalMessage: err.internalMessage,
     errorCode: err.errorCode,
-    body: req.body,
+    body: sanitizeObjectFromPassword(req.body),
     stack: err.stack,
     path: req.originalUrl,
     method: req.method,

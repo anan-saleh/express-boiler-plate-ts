@@ -21,9 +21,8 @@ export const authenticateUser = (
       req.logIn(user, (err) => {
         if (err) {
           return reject(new InternalServerError({
-            message: 'Login failed',
+            internalMessage: 'Login failed',
             meta: { err },
-            severity: LogLevel.ERROR,
           }));
         }
         resolve(user);
@@ -37,7 +36,7 @@ export const logoutUserSession = (req: Request): Promise<void> => {
     req.logout((err) => {
       if (err) {
         return reject(new InternalServerError({
-          message: 'Logout failed',
+          internalMessage: 'Logout failed',
           meta: { err },
         }));
       }

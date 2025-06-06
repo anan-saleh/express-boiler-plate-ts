@@ -1,10 +1,9 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
-import { BadRequest, UserAlreadyExistsError } from '../utils/AppError';
+import { UserAlreadyExistsError } from '../utils/AppError';
 import { RegisterInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
 import { backupSanitizer } from './auth.service';
-import { ErrorCode } from '../constants/errorCodes';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Finding user with password for email: ${email}`, LogLevel.DEBUG);
@@ -30,11 +29,11 @@ const createUser = async ({ email, password }: RegisterInput) => {
   log(`Attempting to create user: ${email}`, LogLevel.DEBUG);
 
   // with zod validation this is not needed,
-  // but it's kept as proper protection another layer of security
+  // but it's kept here for debug purposes in case it avoided zod
   if (!email || !password) {
-    throw new BadRequest({
-      message: 'Email and password are required',
-      errorCode: ErrorCode.MISSING_FIELDS,
+    log('Missing email or password in method createUser', LogLevel.DEBUG, {
+      email,
+      password
     });
   }
 
