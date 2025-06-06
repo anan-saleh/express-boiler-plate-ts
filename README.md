@@ -96,4 +96,22 @@ possible issues
 
 app.routing issue/ route not found 404 => restarting IDE can keep the port running
 
+
+| HTTP Status Code | Name                  | JSON `"status"` | When to Use                                             |
+| ---------------- | --------------------- | --------------- | ------------------------------------------------------- |
+| `200`            | OK                    | `success`       | Successful GET/PUT/DELETE requests                      |
+| `201`            | Created               | `success`       | When a new resource is created (e.g. user registration) |
+| `204`            | No Content            | `success`       | Successful request with no body in response             |
+| `400`            | Bad Request           | `fail`          | Validation errors, missing/invalid inputs               |
+| `401`            | Unauthorized          | `error`         | Authentication required or failed                       |
+| `403`            | Forbidden             | `error`         | Authenticated but not allowed to access resource        |
+| `404`            | Not Found             | `fail`          | Requested resource doesn’t exist                        |
+| `405`            | Method Not Allowed    | `fail`          | HTTP method is not supported                            |
+| `409`            | Conflict              | `fail`          | Duplicate email, conflicting update                     |
+| `422`            | Unprocessable Entity  | `fail`          | Validation passed, but semantically incorrect           |
+| `429`            | Too Many Requests     | `fail`          | Rate limiting, throttling                               |
+| `500`            | Internal Server Error | `error`         | Unexpected backend error                                |
+| `503`            | Service Unavailable   | `error`         | Server is down, database issues                         |
+
+
 -->

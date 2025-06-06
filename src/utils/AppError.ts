@@ -1,16 +1,18 @@
 import { HTTP_STATUS } from '../constants/httpStatus';
-import { ErrorCode } from '../constants/errorCodes';
+import { ERROR_CODE } from '../constants/errorCodes';
 import { LogLevel } from './logger';
 import { ERROR_MESSAGES } from '../constants/errorMessages';
+import { RESPONSE_STATUS } from '../constants/responseStatus';
 
 interface AppErrorOptions {
   message?: string;
   httpStatusCode?: HTTP_STATUS;
-  errorCode?: ErrorCode;
+  errorCode?: ERROR_CODE;
   meta?: Record<string, any>;
   isOperational?: boolean;
   severity?: string,
   internalMessage?: string,
+  responseStatus?: RESPONSE_STATUS,
 }
 
 interface AppErrorSubClassesOptions {
@@ -20,21 +22,23 @@ interface AppErrorSubClassesOptions {
 
 export class AppError extends Error {
   public readonly httpStatusCode: HTTP_STATUS;
-  public readonly errorCode?: ErrorCode;
+  public readonly errorCode?: ERROR_CODE;
   public readonly isOperational: boolean;
   public readonly meta?: Record<string, any>;
   public readonly severity?: string;
   public readonly internalMessage?: string;
+  public readonly responseStatus?: RESPONSE_STATUS;
 
   constructor(errorOptions: AppErrorOptions) {
     const {
       message,
       httpStatusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      errorCode = ErrorCode.UNKNOWN_ERROR,
+      errorCode = ERROR_CODE.UNKNOWN_ERROR,
       meta,
       isOperational = true,
       severity,
-      internalMessage
+      internalMessage,
+      responseStatus,
     }: AppErrorOptions = errorOptions;
     super(message);
     this.httpStatusCode = httpStatusCode;
@@ -43,6 +47,7 @@ export class AppError extends Error {
     this.severity = severity;
     this.errorCode = errorCode;
     this.internalMessage = internalMessage;
+    this.responseStatus = responseStatus;
     Error.captureStackTrace(this, this.constructor);
   }
 }
@@ -53,9 +58,10 @@ export class UnauthorizedError extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ErrorCode.UNAUTHORIZED],
+      message: ERROR_MESSAGES[ERROR_CODE.UNAUTHORIZED],
       httpStatusCode: HTTP_STATUS.UNAUTHORIZED,
-      errorCode: ErrorCode.UNAUTHORIZED,
+      responseStatus: RESPONSE_STATUS.ERROR,
+      errorCode: ERROR_CODE.UNAUTHORIZED,
       severity: LogLevel.WARN,
       internalMessage,
       meta,
@@ -70,9 +76,10 @@ export class InternalServerError extends AppError {
   }: AppErrorSubClassesOptions) {
 
     super({
-      message: ERROR_MESSAGES[ErrorCode.INTERNAL_SERVER_ERROR],
+      message: ERROR_MESSAGES[ERROR_CODE.INTERNAL_SERVER_ERROR],
       httpStatusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
+      responseStatus: RESPONSE_STATUS.ERROR,
+      errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR,
       severity: LogLevel.ERROR,
       internalMessage,
       meta,
@@ -86,9 +93,10 @@ export class BadRequest extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ErrorCode.BAD_REQUEST],
+      message: ERROR_MESSAGES[ERROR_CODE.BAD_REQUEST],
       httpStatusCode: HTTP_STATUS.BAD_REQUEST,
-      errorCode: ErrorCode.BAD_REQUEST,
+      responseStatus: RESPONSE_STATUS.FAIL,
+      errorCode: ERROR_CODE.BAD_REQUEST,
       severity: LogLevel.WARN,
       internalMessage,
       meta,
@@ -102,9 +110,10 @@ export class UserAlreadyExistsError extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ErrorCode.USER_ALREADY_EXISTS],
+      message: ERROR_MESSAGES[ERROR_CODE.USER_ALREADY_EXISTS],
       httpStatusCode: HTTP_STATUS.CONFLICT,
-      errorCode: ErrorCode.USER_ALREADY_EXISTS,
+      responseStatus: RESPONSE_STATUS.FAIL,
+      errorCode: ERROR_CODE.USER_ALREADY_EXISTS,
       severity: LogLevel.WARN,
       internalMessage,
       meta,
@@ -118,9 +127,10 @@ export class InvalidCredentialsError extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ErrorCode.INVALID_CREDENTIALS],
+      message: ERROR_MESSAGES[ERROR_CODE.INVALID_CREDENTIALS],
       httpStatusCode: HTTP_STATUS.UNAUTHORIZED,
-      errorCode: ErrorCode.INVALID_CREDENTIALS,
+      responseStatus: RESPONSE_STATUS.ERROR,
+      errorCode: ERROR_CODE.INVALID_CREDENTIALS,
       severity: LogLevel.WARN,
       internalMessage,
       meta,

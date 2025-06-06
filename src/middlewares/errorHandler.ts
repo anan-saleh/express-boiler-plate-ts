@@ -24,7 +24,7 @@ export const errorHandler = (
     method: req.method,
   });
   res.status(statusCode).json({
-    status: 'error',
+    status: err.responseStatus,
     message,
     errorCode: err.errorCode
   });

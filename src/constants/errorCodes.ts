@@ -1,4 +1,4 @@
-export enum ErrorCode {
+export enum ERROR_CODE {
   // Auth & User Errors
   USER_ALREADY_EXISTS = 'USER_ALREADY_EXISTS',
   USER_NOT_FOUND = 'USER_NOT_FOUND',
