@@ -1,6 +1,6 @@
 import { ErrorCode } from './errorCodes';
 
-export const ErrorMessages = {
+export const ERROR_MESSAGES = {
   // Auth & User Errors
   [ErrorCode.USER_ALREADY_EXISTS]: 'An account with this email already exists.',
   [ErrorCode.USER_NOT_FOUND]: 'No account found for the provided credentials.',

@@ -1,7 +1,6 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
-import { AppError, BadRequest } from '../utils/AppError';
-import { HTTP_STATUS } from '../constants/httpStatus';
+import { BadRequest, UserAlreadyExistsError } from '../utils/AppError';
 import { RegisterInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
 import { backupSanitizer } from './auth.service';
@@ -41,14 +40,10 @@ const createUser = async ({ email, password }: RegisterInput) => {
 
   const existingUser = await findUserByEmail(email);
   if (existingUser?._id) {
-    throw new AppError({
-      message: 'Email already exists',
-      httpStatusCode: HTTP_STATUS.CONFLICT,
-      errorCode: ErrorCode.USER_ALREADY_EXISTS,
+    throw new UserAlreadyExistsError({
       meta: {
         user: sanitizeUser(existingUser)
       },
-      severity: LogLevel.WARN,
     });
   }
 

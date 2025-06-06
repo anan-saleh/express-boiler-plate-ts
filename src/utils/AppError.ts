@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from '../constants/httpStatus';
 import { ErrorCode } from '../constants/errorCodes';
 import { LogLevel } from './logger';
+import { ERROR_MESSAGES } from '../constants/errorMessages';
 
 interface AppErrorOptions {
   message?: string;
@@ -66,5 +67,17 @@ export class BadRequest extends AppError {
       httpStatusCode: HTTP_STATUS.BAD_REQUEST,
     };
     super(options);
+  }
+}
+
+export class UserAlreadyExistsError extends AppError {
+  constructor(meta?: Record<string, any>) {
+    super({
+      message: ERROR_MESSAGES[ErrorCode.USER_ALREADY_EXISTS],
+      httpStatusCode: HTTP_STATUS.CONFLICT,
+      errorCode: ErrorCode.USER_ALREADY_EXISTS,
+      severity: LogLevel.WARN,
+      meta,
+    });
   }
 }
