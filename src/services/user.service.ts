@@ -1,39 +1,41 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
-import { UserAlreadyExistsError } from '../utils/AppError';
+import {InvalidCredentialsError, UserAlreadyExistsError} from '../utils/AppError';
 import { RegisterInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
 import { backupSanitizer } from './auth.service';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
-  log(`Finding user with password for email: ${email}`, LogLevel.DEBUG);
-  return await User.findOne({ email }).select('+password').exec();
+  log(`Attempting finding user with password for email: ${email}`, LogLevel.DEBUG);
+  const user = await User.findOne({ email }).select('+password').exec();
+  log(`User found: ${user?.email}`, LogLevel.DEBUG);
+  return user;
 };
 
 const findUserById = async (id: string): Promise<UserDocument | null> => {
   log(`Attempting to find user by id: ${id}`, LogLevel.DEBUG);
   const user = await User.findOne({ _id: id }).exec();
-  log(`User found: ${user}`, LogLevel.DEBUG);
+  log(`User found: ${user?.email}`, LogLevel.DEBUG);
   return user;
 };
 
 const findUserByEmail = async (email: string): Promise<UserDocument | null> => {
   log(`Attempting to find user by email: ${email}`, LogLevel.DEBUG);
   const user = await User.findOne({ email }).exec();
-  log(`User found: ${user}`, LogLevel.DEBUG);
+  log(`User found: ${user?.email}`, LogLevel.DEBUG);
   return user;
 };
 
 const createUser = async ({ email, password }: RegisterInput) => {
 
-  log(`Attempting to create user: ${email}`, LogLevel.DEBUG);
+  log(`Attempting to create user: ${email}`, LogLevel.INFO);
 
   // with zod validation this is not needed,
   // but it's kept here for debug purposes in case it avoided zod
   if (!email || !password) {
-    log('Missing email or password in method createUser', LogLevel.DEBUG, {
-      email,
-      password
+    throw new InvalidCredentialsError({
+      internalMessage: 'createUser - By Passed http request with no email or password',
+      meta: { email }
     });
   }
 
