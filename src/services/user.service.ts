@@ -3,7 +3,7 @@ import { log, LogLevel } from '../utils/logger';
 import {InvalidCredentialsError, UserAlreadyExistsError} from '../utils/AppError';
 import { RegisterInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
-import { backupSanitizer } from './auth.service';
+import { retryAttemptToSanitizeUser } from './auth.service';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Attempting finding user with password for email: ${email}`, LogLevel.DEBUG);
@@ -56,12 +56,11 @@ const createUser = async ({ email, password }: RegisterInput) => {
   let backupSanitizedUser;
 
   // in case the sanitizer in mongoose method did not work
-  // keep this a proper security measurement
-  // todo: make it recursively later 3 attempts then throw error
+  // keep this as a proper security measurement
   // ITS VERY BAD TO RETURN PASSWORD ALWAYS PROCEED WITH EXTRA CAUTION
-  // @ts-ignore
-  if (safeUser?.password) {
-    backupSanitizedUser = backupSanitizer(user);
+
+  if ('password' in safeUser) {
+    backupSanitizedUser = await retryAttemptToSanitizeUser(user);
   }
 
   const sanitizedUser = backupSanitizedUser?._id ? backupSanitizedUser : safeUser;

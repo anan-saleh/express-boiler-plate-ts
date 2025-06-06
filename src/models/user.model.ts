@@ -3,12 +3,16 @@ import bcrypt from 'bcrypt';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../utils/validators/password';
 import { sanitizeUser } from '../utils/sanitizers';
 
+
 export interface IUser {
   email: string;
   password: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
   sanitize(): Omit<this, 'password' | '__v' | 'comparePassword' | 'sanitize'>;
 }
+
+export type SafeUser = Pick<UserDocument, 'email' | '_id'>;
+
 // with zod validation no need to keep in password minlength and maxlength,
 // however they were kept as another layer of protection
 const userSchema = new Schema<IUser>({
@@ -41,7 +45,7 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.methods.sanitize = function () {
+userSchema.methods.sanitize = function (): SafeUser {
   const sanitizedUser = sanitizeUser(this.toObject());
   return sanitizedUser;
 };

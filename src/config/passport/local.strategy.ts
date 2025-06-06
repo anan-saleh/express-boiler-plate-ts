@@ -3,7 +3,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { findUserByEmailWithPassword } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
 import { InvalidCredentialsError } from '../../utils/AppError';
-import { backupSanitizer } from '../../services/auth.service';
+import { retryAttemptToSanitizeUser } from '../../services/auth.service';
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -32,16 +32,15 @@ passport.use(new LocalStrategy({
         },
       }));
     }
-    let safeUser = user.sanitize();
+    const safeUser = user.sanitize();
     let backupSanitizedUser;
 
     // in case the sanitizer in mongoose method did not work
     // keep this a proper security measurement
-    // todo: make it recursively later 3 attempts then throw error
     // ITS VERY BAD TO RETURN PASSWORD ALWAYS PROCEED WITH EXTRA CAUTION
-    // @ts-ignore
-    if (safeUser?.password) {
-      backupSanitizedUser = backupSanitizer(user);
+
+    if ('password' in safeUser) {
+      backupSanitizedUser = await retryAttemptToSanitizeUser(user);
     }
 
     const sanitizedUser = backupSanitizedUser?._id ? backupSanitizedUser : safeUser;
