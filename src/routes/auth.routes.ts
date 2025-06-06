@@ -2,11 +2,13 @@ import { Router } from 'express';
 import { loginUser, logoutUser, registerUser } from '../controllers/auth.controller';
 import { validate } from '../middlewares/validate';
 import { loginSchema, registerSchema } from '../schemas/auth.schema';
+import { LIMIT_TYPES, rateLimits } from '../middlewares/rateLimits';
+import { isAuthenticated } from '../middlewares/isAuthenticated';
 
 const router = Router();
 
-router.post('/register', validate(registerSchema), registerUser);
-router.post('/login', validate(loginSchema), loginUser);
-router.post('/logout', logoutUser);
+router.post('/register', rateLimits(LIMIT_TYPES.REGISTER), validate(registerSchema), registerUser);
+router.post('/login', rateLimits(LIMIT_TYPES.LOGIN), validate(loginSchema), loginUser);
+router.post('/logout', rateLimits(LIMIT_TYPES.GENERAL), isAuthenticated, logoutUser);
 
 export default router;
