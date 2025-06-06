@@ -27,8 +27,8 @@ const LIMIT_BY_TYPE: Record<LIMIT_TYPES, number> = {
   [LIMIT_TYPES.GENERAL]: 100,
 };
 
-export const rateLimits = (type: LIMIT_TYPES) =>
-  rateLimit({
+export const rateLimits = (type: LIMIT_TYPES) => {
+  return rateLimit({
     windowMs: WINDOW_MS_BY_TYPE[type],
     limit: LIMIT_BY_TYPE[type],
     message: {
@@ -39,3 +39,4 @@ export const rateLimits = (type: LIMIT_TYPES) =>
     standardHeaders: true,
     legacyHeaders: false,
   });
+};
