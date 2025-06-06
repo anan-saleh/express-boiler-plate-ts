@@ -25,7 +25,7 @@ export const errorHandler = (
   });
   res.status(statusCode).json({
     status: err.responseStatus,
-    message,
+    // message,
     errorCode: err.errorCode
   });
 };
