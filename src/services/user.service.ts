@@ -1,8 +1,7 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
-import {InvalidCredentialsError, UserAlreadyExistsError} from '../utils/AppError';
+import { BadRequest, InvalidCredentialsError } from '../utils/AppError';
 import { RegisterInput } from '../schemas/auth.schema';
-import { sanitizeUser } from '../utils/sanitizers';
 import { retryAttemptToSanitizeUser } from './auth.service';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
@@ -41,9 +40,10 @@ const createUser = async ({ email, password }: RegisterInput) => {
 
   const existingUser = await findUserByEmail(email);
   if (existingUser?._id) {
-    throw new UserAlreadyExistsError({
+    throw new BadRequest({
+      internalMessage: `${existingUser.email} Is attempting to register but user already exists`,
       meta: {
-        user: sanitizeUser(existingUser)
+        email: existingUser.email,
       },
     });
   }

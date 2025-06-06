@@ -1,7 +1,6 @@
 import { HTTP_STATUS_CODE } from '../constants/httpStatusCode';
 import { ERROR_CODE } from '../constants/errorCodes';
 import { LogLevel } from './logger';
-import { ERROR_MESSAGES } from '../constants/errorMessages';
 import { RESPONSE_STATUS } from '../constants/responseStatus';
 
 interface AppErrorOptions {
@@ -58,7 +57,6 @@ export class UnauthorizedError extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ERROR_CODE.UNAUTHORIZED],
       httpStatusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.UNAUTHORIZED,
@@ -76,7 +74,6 @@ export class InternalServerError extends AppError {
   }: AppErrorSubClassesOptions) {
 
     super({
-      message: ERROR_MESSAGES[ERROR_CODE.INTERNAL_SERVER_ERROR],
       httpStatusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR,
@@ -93,27 +90,9 @@ export class BadRequest extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ERROR_CODE.BAD_REQUEST],
       httpStatusCode: HTTP_STATUS_CODE.BAD_REQUEST,
       responseStatus: RESPONSE_STATUS.FAIL,
       errorCode: ERROR_CODE.BAD_REQUEST,
-      severity: LogLevel.WARN,
-      internalMessage,
-      meta,
-    });
-  }
-}
-
-export class UserAlreadyExistsError extends AppError {
-  constructor({
-    internalMessage,
-    meta
-  }: AppErrorSubClassesOptions) {
-    super({
-      message: ERROR_MESSAGES[ERROR_CODE.USER_ALREADY_EXISTS],
-      httpStatusCode: HTTP_STATUS_CODE.CONFLICT,
-      responseStatus: RESPONSE_STATUS.FAIL,
-      errorCode: ERROR_CODE.USER_ALREADY_EXISTS,
       severity: LogLevel.WARN,
       internalMessage,
       meta,
@@ -127,7 +106,6 @@ export class InvalidCredentialsError extends AppError {
     meta
   }: AppErrorSubClassesOptions) {
     super({
-      message: ERROR_MESSAGES[ERROR_CODE.INVALID_CREDENTIALS],
       httpStatusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.INVALID_CREDENTIALS,
