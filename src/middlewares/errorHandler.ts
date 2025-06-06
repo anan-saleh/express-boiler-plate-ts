@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from '../utils/AppError';
-import { HTTP_STATUS } from '../constants/httpStatus';
+import { HTTP_STATUS_CODE } from '../constants/httpStatusCode';
 import { log, LogLevel } from '../utils/logger';
 import { sanitizeObjectFromPassword } from '../utils/sanitizers';
 
@@ -10,7 +10,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction, // important part of the error handler for express even if it's not used
 ) => {
-  const statusCode = err.httpStatusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+  const statusCode = err.httpStatusCode || HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR;
   const message = err.message || 'Something went wrong';
   log(message, LogLevel.DEBUG, { err, req });
   const severity = err.severity as LogLevel;

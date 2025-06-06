@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../constants/httpStatus';
+import { HTTP_STATUS_CODE } from '../constants/httpStatusCode';
 import { ERROR_CODE } from '../constants/errorCodes';
 import { LogLevel } from './logger';
 import { ERROR_MESSAGES } from '../constants/errorMessages';
@@ -6,7 +6,7 @@ import { RESPONSE_STATUS } from '../constants/responseStatus';
 
 interface AppErrorOptions {
   message?: string;
-  httpStatusCode?: HTTP_STATUS;
+  httpStatusCode?: HTTP_STATUS_CODE;
   errorCode?: ERROR_CODE;
   meta?: Record<string, any>;
   isOperational?: boolean;
@@ -21,7 +21,7 @@ interface AppErrorSubClassesOptions {
 }
 
 export class AppError extends Error {
-  public readonly httpStatusCode: HTTP_STATUS;
+  public readonly httpStatusCode: HTTP_STATUS_CODE;
   public readonly errorCode?: ERROR_CODE;
   public readonly isOperational: boolean;
   public readonly meta?: Record<string, any>;
@@ -32,7 +32,7 @@ export class AppError extends Error {
   constructor(errorOptions: AppErrorOptions) {
     const {
       message,
-      httpStatusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      httpStatusCode = HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
       errorCode = ERROR_CODE.UNKNOWN_ERROR,
       meta,
       isOperational = true,
@@ -59,7 +59,7 @@ export class UnauthorizedError extends AppError {
   }: AppErrorSubClassesOptions) {
     super({
       message: ERROR_MESSAGES[ERROR_CODE.UNAUTHORIZED],
-      httpStatusCode: HTTP_STATUS.UNAUTHORIZED,
+      httpStatusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.UNAUTHORIZED,
       severity: LogLevel.WARN,
@@ -77,7 +77,7 @@ export class InternalServerError extends AppError {
 
     super({
       message: ERROR_MESSAGES[ERROR_CODE.INTERNAL_SERVER_ERROR],
-      httpStatusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      httpStatusCode: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.INTERNAL_SERVER_ERROR,
       severity: LogLevel.ERROR,
@@ -94,7 +94,7 @@ export class BadRequest extends AppError {
   }: AppErrorSubClassesOptions) {
     super({
       message: ERROR_MESSAGES[ERROR_CODE.BAD_REQUEST],
-      httpStatusCode: HTTP_STATUS.BAD_REQUEST,
+      httpStatusCode: HTTP_STATUS_CODE.BAD_REQUEST,
       responseStatus: RESPONSE_STATUS.FAIL,
       errorCode: ERROR_CODE.BAD_REQUEST,
       severity: LogLevel.WARN,
@@ -111,7 +111,7 @@ export class UserAlreadyExistsError extends AppError {
   }: AppErrorSubClassesOptions) {
     super({
       message: ERROR_MESSAGES[ERROR_CODE.USER_ALREADY_EXISTS],
-      httpStatusCode: HTTP_STATUS.CONFLICT,
+      httpStatusCode: HTTP_STATUS_CODE.CONFLICT,
       responseStatus: RESPONSE_STATUS.FAIL,
       errorCode: ERROR_CODE.USER_ALREADY_EXISTS,
       severity: LogLevel.WARN,
@@ -128,7 +128,7 @@ export class InvalidCredentialsError extends AppError {
   }: AppErrorSubClassesOptions) {
     super({
       message: ERROR_MESSAGES[ERROR_CODE.INVALID_CREDENTIALS],
-      httpStatusCode: HTTP_STATUS.UNAUTHORIZED,
+      httpStatusCode: HTTP_STATUS_CODE.UNAUTHORIZED,
       responseStatus: RESPONSE_STATUS.ERROR,
       errorCode: ERROR_CODE.INVALID_CREDENTIALS,
       severity: LogLevel.WARN,
