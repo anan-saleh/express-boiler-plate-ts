@@ -4,6 +4,7 @@ import { findUserByEmailWithPassword } from '../../services/user.service';
 import { log, LogLevel } from '../../utils/logger';
 import { UnauthorizedError } from '../../utils/AppError';
 import { backupSanitizer } from '../../services/auth.service';
+import { ErrorCode } from '../../constants/errorCodes';
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -15,9 +16,12 @@ passport.use(new LocalStrategy({
     if (!user?._id) {
       // await createUser({ email, password });
       return done(new UnauthorizedError({
-        message: 'User not found',
+        message: 'Invalid email',
+        errorCode: ErrorCode.INVALID_CREDENTIALS,
         severity: LogLevel.WARN,
-        meta: { email },
+        meta: {
+          email
+        },
       }));
     }
 
@@ -26,6 +30,7 @@ passport.use(new LocalStrategy({
     if (!isMatch) {
       return done(new UnauthorizedError({
         message: 'Invalid password',
+        errorCode: ErrorCode.INVALID_CREDENTIALS,
         severity: LogLevel.WARN,
         meta: { email },
       }));

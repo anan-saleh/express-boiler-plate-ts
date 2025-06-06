@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTP_STATUS } from '../utils/httpStatus';
+import { HTTP_STATUS } from '../constants/httpStatus';
 import { authenticateUser, logoutUserSession } from '../services/auth.service';
 import { createUser } from '../services/user.service';
 import { RegisterInput, LoginInput } from '../schemas/auth.schema';

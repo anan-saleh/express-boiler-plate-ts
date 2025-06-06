@@ -1,7 +1,7 @@
 import { NextFunction, Request } from 'express';
 import passport from 'passport';
 import { UserDocument } from '../models/user.model';
-import { UnauthorizedError, InternalServerError } from '../utils/AppError';
+import { InternalServerError } from '../utils/AppError';
 import { log, LogLevel } from '../utils/logger';
 import { LoginInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
@@ -22,8 +22,8 @@ export const authenticateUser = (
         if (err) {
           return reject(new InternalServerError({
             message: 'Login failed',
+            meta: { err },
             severity: LogLevel.ERROR,
-            meta: { err }
           }));
         }
         resolve(user);
@@ -39,7 +39,6 @@ export const logoutUserSession = (req: Request): Promise<void> => {
         return reject(new InternalServerError({
           message: 'Logout failed',
           meta: { err },
-          severity: LogLevel.ERROR,
         }));
       }
       resolve();

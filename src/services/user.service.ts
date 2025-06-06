@@ -1,10 +1,11 @@
 import { User, UserDocument } from '../models/user.model';
 import { log, LogLevel } from '../utils/logger';
 import { AppError, BadRequest } from '../utils/AppError';
-import { HTTP_STATUS } from '../utils/httpStatus';
+import { HTTP_STATUS } from '../constants/httpStatus';
 import { RegisterInput } from '../schemas/auth.schema';
 import { sanitizeUser } from '../utils/sanitizers';
 import { backupSanitizer } from './auth.service';
+import { ErrorCode } from '../constants/errorCodes';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Finding user with password for email: ${email}`, LogLevel.DEBUG);
@@ -34,6 +35,7 @@ const createUser = async ({ email, password }: RegisterInput) => {
   if (!email || !password) {
     throw new BadRequest({
       message: 'Email and password are required',
+      errorCode: ErrorCode.MISSING_FIELDS,
     });
   }
 
@@ -42,6 +44,7 @@ const createUser = async ({ email, password }: RegisterInput) => {
     throw new AppError({
       message: 'Email already exists',
       httpStatusCode: HTTP_STATUS.CONFLICT,
+      errorCode: ErrorCode.USER_ALREADY_EXISTS,
       meta: {
         user: sanitizeUser(existingUser)
       },

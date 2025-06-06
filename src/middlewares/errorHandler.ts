@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from '../utils/AppError';
-import { HTTP_STATUS } from '../utils/httpStatus';
+import { HTTP_STATUS } from '../constants/httpStatus';
 import { log, LogLevel } from '../utils/logger';
 
 export const errorHandler = (
@@ -15,6 +15,7 @@ export const errorHandler = (
   const severity = err.severity as LogLevel;
   log(message, severity, {
     // message: err.message,
+    errorCode: err.errorCode,
     body: req.body,
     stack: err.stack,
     path: req.originalUrl,
@@ -23,5 +24,6 @@ export const errorHandler = (
   res.status(statusCode).json({
     status: 'error',
     message,
+    errorCode: err.errorCode
   });
 };
