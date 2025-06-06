@@ -7,21 +7,21 @@ import { retryAttemptToSanitizeUser } from './auth.service';
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
   log(`Attempting finding user with password for email: ${email}`, LogLevel.DEBUG);
   const user = await User.findOne({ email }).select('+password').exec();
-  log(`User found: ${user?.email}`, LogLevel.DEBUG);
+  log(`User found: ${user?.email} ${user?.role}`, LogLevel.DEBUG);
   return user;
 };
 
 const findUserById = async (id: string): Promise<UserDocument | null> => {
   log(`Attempting to find user by id: ${id}`, LogLevel.DEBUG);
   const user = await User.findOne({ _id: id }).exec();
-  log(`User found: ${user?.email}`, LogLevel.DEBUG);
+  log(`User found: ${user?.email} ${user?.role}`, LogLevel.DEBUG);
   return user;
 };
 
 const findUserByEmail = async (email: string): Promise<UserDocument | null> => {
   log(`Attempting to find user by email: ${email}`, LogLevel.DEBUG);
   const user = await User.findOne({ email }).exec();
-  log(`User found: ${user?.email}`, LogLevel.DEBUG);
+  log(`User found: ${user?.email} ${user?.role}`, LogLevel.DEBUG);
   return user;
 };
 

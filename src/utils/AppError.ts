@@ -115,3 +115,19 @@ export class InvalidCredentialsError extends AppError {
     });
   }
 }
+
+export class ForbiddenError extends AppError {
+  constructor({
+    internalMessage,
+    meta
+  }: AppErrorSubClassesOptions) {
+    super({
+      httpStatusCode: HTTP_STATUS_CODE.FORBIDDEN,
+      responseStatus: RESPONSE_STATUS.ERROR,
+      errorCode: ERROR_CODE.FORBIDDEN,
+      severity: LogLevel.WARN,
+      internalMessage,
+      meta,
+    });
+  }
+}

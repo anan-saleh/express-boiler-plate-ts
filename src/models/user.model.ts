@@ -2,16 +2,18 @@ import { Schema, model, HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../utils/validators/password';
 import { sanitizeUser } from '../utils/sanitizers';
+import { Roles } from '../config/roles';
 
 
 export interface IUser {
   email: string;
   password: string;
+  role: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
   sanitize(): Omit<this, 'password' | '__v' | 'comparePassword' | 'sanitize'>;
 }
 
-export type SafeUser = Pick<UserDocument, 'email' | '_id'>;
+export type SafeUser = Pick<UserDocument, 'email' | '_id' | 'role'>;
 
 // with zod validation no need to keep in password minlength and maxlength,
 // however they were kept as another layer of protection
@@ -29,7 +31,12 @@ const userSchema = new Schema<IUser>({
     minlength: [MIN_PASSWORD_LENGTH, `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`],
     maxlength: [MAX_PASSWORD_LENGTH, `Password must be no more than ${MAX_PASSWORD_LENGTH} characters long`],
     select: false,
-  }
+  },
+  role: {
+    type: String,
+    enum: Object.values(Roles),
+    default: Roles.USER,
+  },
 }, {
   timestamps: true,
 });
