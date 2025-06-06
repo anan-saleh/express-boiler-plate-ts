@@ -9,12 +9,10 @@ export const getEnvVariable = (key: string): string | undefined => {
   }
 };
 
-const MONGO_COLLECTION = 'SomeCollection';
-
 export const ENV = {
   PORT: parseInt(String(getEnvVariable('PORT'))),
-  LOG_LEVEL: getEnvVariable('LOG_LEVEL') || 'info',
-  MONGO_URI: getEnvVariable('MONGO_URI') || `mongodb://127.0.0.1:27017/${MONGO_COLLECTION}`,
-  NODE_ENV: getEnvVariable('NODE_ENV') || 'production',
-  SESSION_SECRET: getEnvVariable(('SESSION_SECRET')) || 'random-dev-key'
+  LOG_LEVEL: String(getEnvVariable('LOG_LEVEL')),
+  MONGO_URI: String(getEnvVariable('MONGO_URI')),
+  NODE_ENV: String(getEnvVariable('NODE_ENV')),
+  SESSION_SECRET: String(getEnvVariable(('SESSION_SECRET')))
 };

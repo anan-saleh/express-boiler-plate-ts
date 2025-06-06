@@ -14,9 +14,9 @@ passport.use(new LocalStrategy({
     const user = await findUserByEmailWithPassword(email);
     if (!user?._id) {
       // await createUser({ email, password });
-      log(`User not found: ${email}`, LogLevel.WARN);
       return done(new UnauthorizedError({
         message: 'User not found',
+        severity: LogLevel.WARN,
         meta: { email },
       }));
     }
@@ -24,9 +24,9 @@ passport.use(new LocalStrategy({
     const isMatch = await user?.comparePassword(password);
 
     if (!isMatch) {
-      log(`Invalid password for ${email}`, LogLevel.WARN);
       return done(new UnauthorizedError({
         message: 'Invalid password',
+        severity: LogLevel.WARN,
         meta: { email },
       }));
     }

@@ -11,7 +11,7 @@ export const registerUser = catchAsync(async (req: Request<{}, {}, RegisterInput
 });
 
 export const loginUser = catchAsync(async (req: Request<{}, {}, LoginInput>, res: Response, next: NextFunction) => {
-  const user = await authenticateUser(req);
+  const user = await authenticateUser(req, next);
   res.status(HTTP_STATUS.OK).json({
     message: 'Login successful',
     user: user,

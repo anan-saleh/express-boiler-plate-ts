@@ -3,6 +3,7 @@ import { log, LogLevel } from '../utils/logger';
 import { AppError, BadRequest } from '../utils/AppError';
 import { HTTP_STATUS } from '../utils/httpStatus';
 import { RegisterInput } from '../schemas/auth.schema';
+import { sanitizeUser } from '../utils/sanitizers';
 import { backupSanitizer } from './auth.service';
 
 const findUserByEmailWithPassword = async (email: string): Promise<UserDocument | null> => {
@@ -40,7 +41,11 @@ const createUser = async ({ email, password }: RegisterInput) => {
   if (existingUser?._id) {
     throw new AppError({
       message: 'Email already exists',
-      httpStatusCode: HTTP_STATUS.CONFLICT
+      httpStatusCode: HTTP_STATUS.CONFLICT,
+      meta: {
+        user: sanitizeUser(existingUser)
+      },
+      severity: LogLevel.WARN,
     });
   }
 
